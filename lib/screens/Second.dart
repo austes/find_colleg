@@ -1,9 +1,12 @@
 import 'dart:async';
 import 'dart:convert';
-
 import 'package:find_colleague/Colleague.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'dart:async' show Future;
+
+
+
 
 
 class Second extends StatefulWidget {
@@ -31,11 +34,9 @@ class SecondState extends State<Second> {
     );
   }
 
-
- Future<String> _loadColleagueAsset() async {
-  return await rootBundle.loadString('assets/colleague.json');
+Future<String> _loadColleagueAsset() async {
+  return await rootBundle.loadString('assets/data.json');
 }
-
 
 Future loadColleague() async {
   String jsonString = await _loadColleagueAsset();
@@ -49,4 +50,5 @@ Future loadColleague() async {
     super.initState();
     this.loadColleague();
   }
+ 
 }
