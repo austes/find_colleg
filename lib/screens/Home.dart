@@ -21,7 +21,7 @@ class Home extends StatelessWidget {
                       fontSize: 20.0, fontWeight: FontWeight.bold)),
               new RaisedButton(
                   onPressed: () {
-                    Navigator.of(context).pushNamed('/Second');
+                    Navigator.of(context).pushNamed('/SecondEdit');
                   },
                   color: Theme.of(context).accentColor,
                   elevation: 15.0,

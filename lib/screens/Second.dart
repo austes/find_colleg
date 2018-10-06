@@ -68,14 +68,27 @@ Future<String> _loadColleagueAsset() async {
 
   void values() {
     _list = List();
-    _list.add("Gabija Cibauskaite");
-    _list.add("Guste Abkaite");
-    _list.add("Ieva Grigaityte");
-    _list.add("Kotryna Badaugiene");
-    _list.add("Mantas Danyla");
-    _list.add("Motiejus Antonovas");
-    _list.add("Giedrius Dolmatovas");
-    _list.add("cia sarasas");
+//    _list.add("Gabija Cibauskaite");
+//    _list.add("Guste Abkaite");
+//    _list.add("Ieva Grigaityte");
+//    _list.add("Kotryna Badaugiene");
+//    _list.add("Mantas Danyla");
+//    _list.add("Motiejus Antonovas");
+//    _list.add("Giedrius Dolmatovas");
+//    _list.add("cia sarasas");
+    loadData();
+  }
+
+  Future<String> _loadAStudentAsset() async {
+    return await rootBundle.loadString('assets/data.json');
+  }
+
+  Future loadData() async {
+    String jsonString = await _loadAStudentAsset();
+    final jsonResponse = json.decode(jsonString);
+    Colleague colleague = new Colleague.fromJson(jsonResponse);
+    _list = json.decode(jsonString);
+    print(colleague.name);
   }
 
 Future loadColleague() async {
@@ -112,7 +125,7 @@ Future loadColleague() async {
                           shrinkWrap: true,
                           itemCount: _list.length,
                           itemBuilder: (BuildContext context, int index) {
-                            String listData = _list[index];
+                            String listData = _list[index]["name"];
                             return new ListTile(
                               title: new Text(listData.toString()),
                             );
@@ -121,7 +134,7 @@ Future loadColleague() async {
                       ),
                            InputDecorator(
                     decoration: const InputDecoration(
-                    
+
                       labelText: 'Spauskite norėdami pamatyti komandų sąrašą',
                     ),
                     isEmpty: _team == '',
