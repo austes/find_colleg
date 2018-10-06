@@ -30,7 +30,7 @@ class _SecondState extends State<Second> {
   List<dynamic> _list;
   bool _isSearching;
   List data;
-  String _searchText = " ";
+  var _searchText = " ";
   List searchresult = new List();
 
   _SecondState() {
@@ -48,6 +48,9 @@ class _SecondState extends State<Second> {
       }
     });
   }
+
+List<String> _teams = <String>['', 'pirmoji', 'antroji', 'trečioji', 'ketvirtoji', 'penktoji'];
+  String _team = '';
 
 
 Future<String> _loadColleagueAsset() async {
@@ -114,10 +117,35 @@ Future loadColleague() async {
                               title: new Text(listData.toString()),
                             );
                           },
-                        ))
-            ],
-          ),
-        ));
+                      ),
+                      ),
+                           InputDecorator(
+                    decoration: const InputDecoration(
+                    
+                      labelText: 'Spauskite norėdami pamatyti komandų sąrašą',
+                    ),
+                    isEmpty: _team == '',
+                    child: new DropdownButtonHideUnderline(
+                      child: new DropdownButton<String>(
+                        value: _team,
+                        isDense: true,
+                        onChanged: (String newValue) {
+                          setState(() {
+                            _team = newValue;
+                          });
+                        },
+                        items: _teams.map((String value) {
+                          return new DropdownMenuItem<String>(
+                            value: value,
+                            child: new Text(value),
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  ),
+                        ]
+          )),
+        );
   }
 
   Widget buildAppBar(BuildContext context) {
@@ -185,14 +213,3 @@ Future loadColleague() async {
     }
   }
 }
-
-
-
-
-
-
-
- 
-
-
-
