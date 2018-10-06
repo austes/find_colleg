@@ -37,22 +37,26 @@ class Third extends StatelessWidget {
               new Text('11',
                   style: new TextStyle(
                       fontSize: 20.0, fontWeight: FontWeight.bold)),
-              new RaisedButton(
-                  textColor: Colors.white,
-                  color: Colors.blue,
-                  child: new Text('Sugrizti'),
-                  onPressed: () {
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                        '/Home', (Route<dynamic> route) => false);
-                  }),
-              new RaisedButton(
-                  textColor: Colors.white,
-                  color: Colors.red,
-                  child: new Text('Toliau'),
-                  onPressed: () {
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                        '/Fourth', (Route<dynamic> route) => false);
-                  }),
+              Center(
+                child: new RaisedButton(
+                    textColor: Colors.white,
+                    color: Colors.blue,
+                    child: new Text('Sugrizti'),
+                    onPressed: () {
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                          '/Home', (Route<dynamic> route) => false);
+                    }),
+              ),
+              Center(
+                child: new RaisedButton(
+                    textColor: Colors.white,
+                    color: Colors.red,
+                    child: new Text('Toliau'),
+                    onPressed: () {
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                          '/Fourth', (Route<dynamic> route) => false);
+                    }),
+              ),
             ],
           ),
         ),

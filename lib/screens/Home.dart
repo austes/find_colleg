@@ -13,10 +13,10 @@ class Home extends StatelessWidget {
           child: new Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              new Text('Sveiki atvyke!',
+              new Text('Sveiki atvykę!',
                   style: new TextStyle(
                       fontSize: 35.0, fontWeight: FontWeight.bold)),
-              new Text('Programele darbuotoju vietai surasti',
+              new Text('Programėlė darbuotojų vietai surasti',
                   style: new TextStyle(
                       fontSize: 20.0, fontWeight: FontWeight.bold)),
               new RaisedButton(
