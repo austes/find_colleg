@@ -15,7 +15,7 @@ class Fourth extends StatelessWidget {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text('Pasirinkite sektoriu'),
+        title: new Text('Pasirinkite sektorių:'),
       ),
       body: new Container(
         padding: new EdgeInsets.all(32.0),
@@ -49,12 +49,14 @@ class Fourth extends StatelessWidget {
            new Text('C',
            style: new TextStyle(
                       fontSize: 20.0, fontWeight: FontWeight.bold)),
-
+new Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
               new RaisedButton(
                   padding: const EdgeInsets.all(8.0),
                   textColor: Colors.white,
                   color: Colors.blue,
-                  child: new Text('Sugrizti'),
+                  child: new Text('Sugrįžti'),
                   onPressed: () {
                     Navigator.of(context).pushNamedAndRemoveUntil(
                         '/Third', (Route<dynamic> route) => false);
@@ -67,7 +69,9 @@ class Fourth extends StatelessWidget {
                   onPressed: () {
                     Navigator.of(context).pushNamedAndRemoveUntil(
                         '/Fifth', (Route<dynamic> route) => false);
-                  })
+                 }),
+                ],
+              ),
             ],
           ),
         ),

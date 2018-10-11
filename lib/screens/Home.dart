@@ -5,7 +5,7 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text('Programele rasti kolega'),
+        title: new Text('Programėlė rasti kolegą'),
       ),
       body: new Container(
         padding: new EdgeInsets.all(20.0),
@@ -33,7 +33,7 @@ class Home extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       new Text(
-                        "Ieskoti pagal varda",
+                        "Ieškoti pagal vardą",
                         style: new TextStyle(
                           color: new Color(0xFFFFFFFF),
                         ),
@@ -56,7 +56,7 @@ class Home extends StatelessWidget {
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       new Text(
-                        "Ieskoti pagal vieta",
+                        "Ieškoti pagal vietą",
                         style: new TextStyle(
                           color: new Color(0xFFFFFFFF),
                         ),

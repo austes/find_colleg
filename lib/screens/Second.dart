@@ -38,7 +38,7 @@ class _SecondState extends State<Second> {
       if (_controller.text.isEmpty) {
         setState(() {
           _isSearching = false;
-          _searchText = "";
+          _searchText = " ";
         });
       } else {
         setState(() {
@@ -75,7 +75,7 @@ Future<String> _loadColleagueAsset() async {
     _list.add("Mantas Danyla");
     _list.add("Motiejus Antonovas");
     _list.add("Giedrius Dolmatovas");
-    _list.add("cia sarasas");
+   
   }
 
 Future loadColleague() async {

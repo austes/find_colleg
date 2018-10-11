@@ -7,24 +7,28 @@ class Fifth extends StatelessWidget {
       appBar: new AppBar(
         title: new Text('Vieta'),
       ),
-      body: new Container(
-        padding: new EdgeInsets.all(32.0),
-        child: new Center(
-          child: new Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              new Text('Jusu pasirinkimas'),
-              new RaisedButton(
-                  child: new Text('Sugrizti'),
-                  color: Theme.of(context).accentColor,
-                  elevation: 4.0,
-                  splashColor: Colors.blueGrey,
-                  onPressed: () {
-                    Navigator.of(context).pushNamedAndRemoveUntil(
-                        '/Home', (Route<dynamic> route) => false);
-                  })
-            ],
-          ),
+      body: buildContainer(context),
+    );
+  }
+
+  Container buildContainer(BuildContext context) {
+    return new Container(
+      padding: new EdgeInsets.all(32.0),
+      child: new Center(
+        child: new Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            new Text('Jūsų pasirinkimas:'),
+            new RaisedButton(
+                child: new Text('Sugrįžti'),
+                color: Theme.of(context).accentColor,
+                elevation: 4.0,
+                splashColor: Colors.blueGrey,
+                onPressed: () {
+                  Navigator.of(context).pushNamedAndRemoveUntil(
+                      '/Home', (Route<dynamic> route) => false);
+                })
+          ],
         ),
       ),
     );
