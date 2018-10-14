@@ -1,12 +1,96 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'dart:convert';
-import 'package:find_colleague/Colleague.dart';
 import 'package:flutter/services.dart';
 import 'dart:async' show Future;
 
+
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+
+
+Future<List<ColleagueTemp>> fetchPhotos(http.Client client) async {
+  String response = await loadColleaguesList();
+
+  // Use the compute function to run parsePhotos in a separate isolate
+  return compute(parseColleagues, response);
+}
+
+// A function that will convert a response body into a List<Photo>
+List<ColleagueTemp> parseColleagues(String responseBody) {
+  final parsed = json.decode(responseBody).cast<Map<String, dynamic>>();
+
+  return parsed.map<ColleagueTemp>((json) => ColleagueTemp.fromJson(json)).toList();
+}
+
+Future<String> loadColleaguesList() async {
+  return await rootBundle.loadString('assets/data.json');
+}
+
+class ColleagueTemp{
+  final String name;
+  final String surname;
+  final String team;
+  final String respons;
+  
+  ColleagueTemp({
+    this.name,
+    this.surname,
+    this.team,
+    this.respons
+  });
+
+  factory ColleagueTemp.fromJson(Map<String, dynamic> parsedJson){
+    return ColleagueTemp(
+      name: parsedJson['name'] as String,
+      surname : parsedJson['surname'] as String,
+      team : parsedJson ['team'] as String,
+      respons : parsedJson ['respons'] as String,
+    );
+  }
+}
+
+class SecondEdit extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+
+      body: FutureBuilder<List<ColleagueTemp>>(
+        future: fetchPhotos(http.Client()),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) print(snapshot.error);
+
+          return snapshot.hasData
+              ? ColleagueList(collegues: snapshot.data)
+              : Center(child: CircularProgressIndicator());
+        },
+      ),
+    );
+  }
+}
+
+class ColleagueList extends StatelessWidget {
+  final List<ColleagueTemp> collegues;
+
+  ColleagueList({Key key, this.collegues}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: collegues.length,
+      itemBuilder: (context, index) {
+        return new ListTile(
+          title: new Text(collegues[index].name),
+        );
+      },
+    );
+  }
+}
+
 void main() => runApp(new MaterialApp(
-      home: new Second(),
+      home: new Second()
+    
     ));
 
 class Second extends StatefulWidget {
@@ -14,8 +98,12 @@ class Second extends StatefulWidget {
   _SecondState createState() => new _SecondState();
 }
 
-
-
+@override
+  void initState() {
+    loadColleaguesList();
+    ColleagueList();
+  }
+  
 class _SecondState extends State<Second> {
   Widget appBarTitle = new Text(
     "Irašykite vardą...",
@@ -30,7 +118,7 @@ class _SecondState extends State<Second> {
   List<dynamic> _list;
   bool _isSearching;
   List data;
-  var _searchText = " ";
+  String _searchText = " ";
   List searchresult = new List();
 
   _SecondState() {
@@ -48,104 +136,84 @@ class _SecondState extends State<Second> {
       }
     });
   }
-
-List<String> _teams = <String>['', 'pirmoji', 'antroji', 'trečioji', 'ketvirtoji', 'penktoji'];
-  String _team = '';
-
-
-Future<String> _loadColleagueAsset() async {
-  return await rootBundle.loadString('assets/data.json');
-}
-
-
-  @override
+@override
   void initState() {
     super.initState();
     _isSearching = false;
-    values();
-    this.loadColleague();
+
+    loadColleaguesList();
+    ColleagueList();
   }
 
-  void values() {
-    _list = List();
-    _list.add("Gabija Cibauskaite");
-    _list.add("Guste Abkaite");
-    _list.add("Ieva Grigaityte");
-    _list.add("Kotryna Badaugiene");
-    _list.add("Mantas Danyla");
-    _list.add("Motiejus Antonovas");
-    _list.add("Giedrius Dolmatovas");
-   
-  }
-
-Future loadColleague() async {
-  String jsonString = await _loadColleagueAsset();
-  final jsonResponse = json.decode(jsonString);
-  Colleague colleague = new Colleague.fromJson(jsonResponse);
-  print(colleague.name);
-}
+  List<String> _teams = <String>[
+    '',
+    'pirmoji',
+    'antroji',
+    'trečioji',
+    'ketvirtoji',
+    'penktoji'
+  ];
+  String _team = '';
 
 
   @override
   Widget build(BuildContext context) {
     return new Scaffold(
-        key: globalKey,
-        appBar: buildAppBar(context),
-        body: new Container(
+      key: globalKey,
+      appBar: buildAppBar(context),
+      body: new Container(
           child: new Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              new Flexible(
-                  child: searchresult.length != 0 || _controller.text.isNotEmpty
-                      ? new ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: searchresult.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            String listData = searchresult[index];
-                            return new ListTile(
-                              title: new Text(listData.toString()),
-                            );
-                          },
-                        )
-                      : new ListView.builder(
-                          shrinkWrap: true,
-                          itemCount: _list.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            String listData = _list[index];
-                            return new ListTile(
-                              title: new Text(listData.toString()),
-                            );
-                          },
-                      ),
-                      ),
-                           InputDecorator(
-                    decoration: const InputDecoration(
-                    
-                      labelText: 'Spauskite norėdami pamatyti komandų sąrašą',
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+            new Flexible(
+              child: searchresult.length != 0 || _controller.text.isNotEmpty
+                  ? new ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: searchresult.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        String listData = searchresult[index];
+                        return new ListTile(
+                          title: new Text(listData.toString()),
+                        );
+                      },
+                    )
+                  : new ListView.builder(
+                      shrinkWrap: true,
+                     // itemCount: _list.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        String listData = _list[index];
+                        return new ListTile(
+                          title: new Text(listData.toString()),
+                        );
+                      },
                     ),
-                    isEmpty: _team == '',
-                    child: new DropdownButtonHideUnderline(
-                      child: new DropdownButton<String>(
-                        value: _team,
-                        isDense: true,
-                        onChanged: (String newValue) {
-                          setState(() {
-                            _team = newValue;
-                          });
-                        },
-                        items: _teams.map((String value) {
-                          return new DropdownMenuItem<String>(
-                            value: value,
-                            child: new Text(value),
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                  ),
-                        ]
-          )),
-        );
+            ),
+            InputDecorator(
+              decoration: const InputDecoration(
+                labelText: 'Spauskite norėdami pamatyti komandų sąrašą',
+              ),
+              isEmpty: _team == '',
+              child: new DropdownButtonHideUnderline(
+                child: new DropdownButton<String>(
+                  value: _team,
+                  isDense: true,
+                  onChanged: (String newValue) {
+                    setState(() {
+                      _team = newValue;
+                    });
+                  },
+                  items: _teams.map((String value) {
+                    return new DropdownMenuItem<String>(
+                      value: value,
+                      child: new Text(value),
+                    );
+                  }).toList(),
+                ),
+              ),
+            ),
+          ])),
+    );
   }
 
   Widget buildAppBar(BuildContext context) {
@@ -213,3 +281,4 @@ Future loadColleague() async {
     }
   }
 }
+

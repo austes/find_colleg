@@ -11,7 +11,7 @@ class Third extends StatelessWidget {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text('Pasirinkite aukštą',
+        title: new Text('Pasirinkite aukštą:',
             style: new TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
       ),
       body: new Container(

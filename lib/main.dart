@@ -1,7 +1,7 @@
-import 'package:find_colleague/screens/Second.dart';
+//import 'package:find_colleague/screens/SecondEdit.dart';
 import 'package:flutter/material.dart';
 import 'package:find_colleague/screens/Home.dart';
-//import 'package:find_colleague/screens/Second.dart';
+import 'package:find_colleague/screens/Second.dart';
 import 'package:find_colleague/screens/Third.dart';
 import 'package:find_colleague/screens/Fourth.dart';
 import 'package:find_colleague/screens/Fifth.dart';
