@@ -26,17 +26,27 @@ class Third extends StatelessWidget {
                 width: 450.0,
                 height: 150.0,
               ),
-              new Text('10',
-                  style: new TextStyle(
-                      fontSize: 20.0, fontWeight: FontWeight.bold)),
+               new RaisedButton(
+                      textColor: Colors.white,
+                      color: Colors.red,
+                      child: new Text('Dešimtas aukštas'),
+                      onPressed: () {
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                            '/FourthTen', (Route<dynamic> route) => false);
+                      }),
               new Image.asset(
                 'assets/eleven.png',
                 width: 450.0,
                 height: 150.0,
               ),
-              new Text('11',
-                  style: new TextStyle(
-                      fontSize: 20.0, fontWeight: FontWeight.bold)),
+               new RaisedButton(
+                      textColor: Colors.white,
+                      color: Colors.red,
+                      child: new Text('Vienuoliktas aukštas'),
+                      onPressed: () {
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                            '/FourthEleven', (Route<dynamic> route) => false);
+                      }),
               new Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
@@ -48,14 +58,7 @@ class Third extends StatelessWidget {
                         Navigator.of(context).pushNamedAndRemoveUntil(
                             '/Home', (Route<dynamic> route) => false);
                       }),
-                  new RaisedButton(
-                      textColor: Colors.white,
-                      color: Colors.red,
-                      child: new Text('Toliau'),
-                      onPressed: () {
-                        Navigator.of(context).pushNamedAndRemoveUntil(
-                            '/Fourth', (Route<dynamic> route) => false);
-                      }),
+                 
                 ],
               ),
             ],

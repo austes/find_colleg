@@ -3,29 +3,15 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'dart:async' show Future;
-
+import 'package:dio/dio.dart';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
+// //TODO Reikia ideti SearchBar
+// //TODO Reikia atvaizduoti laukus kortelemis (CardView)
+// //TODO Reikia ideti filtra pagal komanda (on select dropdown update listview)
 
-Future<List<ColleagueTemp>> fetchPhotos(http.Client client) async {
-  String response = await loadColleaguesList();
-
-  // Use the compute function to run parsePhotos in a separate isolate
-  return compute(parseColleagues, response);
-}
-
-// A function that will convert a response body into a List<Photo>
-List<ColleagueTemp> parseColleagues(String responseBody) {
-  final parsed = json.decode(responseBody).cast<Map<String, dynamic>>();
-
-  return parsed.map<ColleagueTemp>((json) => ColleagueTemp.fromJson(json)).toList();
-}
-
-Future<String> loadColleaguesList() async {
-  return await rootBundle.loadString('assets/data.json');
-}
 
 class ColleagueTemp{
   final String name;
@@ -50,29 +36,30 @@ class ColleagueTemp{
   }
 }
 
-class SecondEdit extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
+// class Second extends StatelessWidget {
+//   @override
+//   Widget build(BuildContext context) {
+//     return Scaffold(
 
-      body: FutureBuilder<List<ColleagueTemp>>(
-        future: fetchPhotos(http.Client()),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) print(snapshot.error);
+//       body: FutureBuilder<List<ColleagueTemp>>(
+//         future: fetchPhotos(http.Client()),
+//         builder: (context, snapshot) {
+//           if (snapshot.hasError) print(snapshot.error);
 
-          return snapshot.hasData
-              ? ColleagueList(collegues: snapshot.data)
-              : Center(child: CircularProgressIndicator());
-        },
-      ),
-    );
-  }
-}
+//           return snapshot.hasData
+//               ? ColleagueList(collegues: snapshot.data)
+//               : Center(child: CircularProgressIndicator());
+//         },
+//       ),
+//     );
+//   }
+// }
 
 class ColleagueList extends StatelessWidget {
   final List<ColleagueTemp> collegues;
 
   ColleagueList({Key key, this.collegues}) : super(key: key);
+
 
   @override
   Widget build(BuildContext context) {
@@ -88,197 +75,168 @@ class ColleagueList extends StatelessWidget {
   }
 }
 
-void main() => runApp(new MaterialApp(
-      home: new Second()
-    
-    ));
 
-class Second extends StatefulWidget {
+void main() => runApp(new Second());
+
+class Second extends StatelessWidget {
   @override
-  _SecondState createState() => new _SecondState();
+  Widget build(BuildContext context) {
+    return new MaterialApp(
+      title: 'Flutter Api Filter list Demo',
+      theme: new ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: new ExamplePage(),
+ 
+     
+     );
+  }
+
 }
 
-@override
-  void initState() {
-    loadColleaguesList();
-    ColleagueList();
-  }
-  
-class _SecondState extends State<Second> {
-  Widget appBarTitle = new Text(
-    "Irašykite vardą...",
-    style: new TextStyle(color: Colors.white),
-  );
-  Icon icon = new Icon(
-    Icons.search,
-    color: Colors.white,
-  );
-  final globalKey = new GlobalKey<ScaffoldState>();
-  final TextEditingController _controller = new TextEditingController();
-  List<dynamic> _list;
-  bool _isSearching;
-  List data;
-  String _searchText = " ";
-  List searchresult = new List();
+class ExamplePage extends StatefulWidget {
+  // ExamplePage({ Key key }) : super(key: key);
+  @override
+  _ExamplePageState createState() => new _ExamplePageState();
+}
 
-  _SecondState() {
-    _controller.addListener(() {
-      if (_controller.text.isEmpty) {
+class _ExamplePageState extends State<ExamplePage> {
+ 
+  final TextEditingController _filter = new TextEditingController();
+  final dio = new Dio();
+  String _searchText = "";
+  List names = new List();
+  List filteredNames = new List();
+  Icon _searchIcon = new Icon(Icons.search);
+  Widget _appBarTitle = new Text( 'Search Example' );
+
+  _ExamplePageState() {
+    _filter.addListener(() {
+      if (_filter.text.isEmpty) {
         setState(() {
-          _isSearching = false;
-          _searchText = " ";
+          _searchText = "";
+          filteredNames = names;
         });
       } else {
         setState(() {
-          _isSearching = true;
-          _searchText = _controller.text;
+          _searchText = _filter.text;
         });
       }
     });
   }
-@override
-  void initState() {
-    super.initState();
-    _isSearching = false;
-
-    loadColleaguesList();
-    ColleagueList();
-  }
-
-  List<String> _teams = <String>[
-    '',
-    'pirmoji',
-    'antroji',
-    'trečioji',
-    'ketvirtoji',
-    'penktoji'
-  ];
-  String _team = '';
-
 
   @override
+  void initState() {
+    this.loadColleaguesList();
+    super.initState();
+  }
+
   Widget build(BuildContext context) {
-    return new Scaffold(
-      key: globalKey,
-      appBar: buildAppBar(context),
-      body: new Container(
-          child: new Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-            new Flexible(
-              child: searchresult.length != 0 || _controller.text.isNotEmpty
-                  ? new ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: searchresult.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        String listData = searchresult[index];
-                        return new ListTile(
-                          title: new Text(listData.toString()),
-                        );
-                      },
-                    )
-                  : new ListView.builder(
-                      shrinkWrap: true,
-                     // itemCount: _list.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        String listData = _list[index];
-                        return new ListTile(
-                          title: new Text(listData.toString()),
-                        );
-                      },
-                    ),
-            ),
-            InputDecorator(
-              decoration: const InputDecoration(
-                labelText: 'Spauskite norėdami pamatyti komandų sąrašą',
-              ),
-              isEmpty: _team == '',
-              child: new DropdownButtonHideUnderline(
-                child: new DropdownButton<String>(
-                  value: _team,
-                  isDense: true,
-                  onChanged: (String newValue) {
-                    setState(() {
-                      _team = newValue;
-                    });
-                  },
-                  items: _teams.map((String value) {
-                    return new DropdownMenuItem<String>(
-                      value: value,
-                      child: new Text(value),
-                    );
-                  }).toList(),
-                ),
-              ),
-            ),
-          ])),
+    return Scaffold(
+       body: FutureBuilder<List<ColleagueTemp>>(
+        future: fetchPhotos(http.Client()),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) print(snapshot.error);
+
+          return snapshot.hasData
+              ? ColleagueList(collegues: snapshot.data)
+              : Center(child: CircularProgressIndicator());
+        },
+      ),
+      appBar: _buildBar(context),
+    
+      children: <Widget>[_buildList()],
+      
+      resizeToAvoidBottomPadding: false,
+    );
+    
+
+     
+    
+  }
+
+  Widget _buildBar(BuildContext context) {
+    return new AppBar(
+      centerTitle: true,
+      title: _appBarTitle,
+      leading: new IconButton(
+        icon: _searchIcon,
+        onPressed: _searchPressed,
+
+      ),
     );
   }
 
-  Widget buildAppBar(BuildContext context) {
-    return new AppBar(centerTitle: true, title: appBarTitle, actions: <Widget>[
-      new IconButton(
-        icon: icon,
-        onPressed: () {
-          setState(() {
-            if (this.icon.icon == Icons.search) {
-              this.icon = new Icon(
-                Icons.close,
-                color: Colors.white,
-              );
-              this.appBarTitle = new TextField(
-                controller: _controller,
-                style: new TextStyle(
-                  color: Colors.white,
-                ),
-                decoration: new InputDecoration(
-                    prefixIcon: new Icon(Icons.search, color: Colors.white),
-                    hintText: "vardo vieta...",
-                    hintStyle: new TextStyle(color: Colors.white)),
-                onChanged: searchOperation,
-              );
-              _handleSearchStart();
-            } else {
-              _handleSearchEnd();
-            }
-          });
-        },
-      ),
-    ]);
-  }
-
-  void _handleSearchStart() {
-    setState(() {
-      _isSearching = true;
-    });
-  }
-
-  void _handleSearchEnd() {
-    setState(() {
-      this.icon = new Icon(
-        Icons.search,
-        color: Colors.white,
-      );
-      this.appBarTitle = new Text(
-        "Search Sample",
-        style: new TextStyle(color: Colors.white),
-      );
-      _isSearching = false;
-      _controller.clear();
-    });
-  }
-
-  void searchOperation(String searchText) {
-    searchresult.clear();
-    if (_isSearching != null) {
-      for (int i = 0; i < _list.length; i++) {
-        String data = _list[i];
-        if (data.toLowerCase().contains(searchText.toLowerCase())) {
-          searchresult.add(data);
+  Widget _buildList() {
+    if (!(_searchText.isEmpty)) {
+      List tempList = new List();
+      for (int i = 0; i < filteredNames.length; i++) {
+        if (filteredNames[i]['name'].toLowerCase().contains(_searchText.toLowerCase())) {
+          tempList.add(filteredNames[i]);
         }
       }
+      filteredNames = tempList;
     }
+    return ListView.builder(
+      itemCount: names == null ? 0 : filteredNames.length,
+      itemBuilder: (BuildContext context, int index) {
+        return new ListTile(
+          title: Text(filteredNames[index]['name']),
+          onTap: () => print(filteredNames[index]['name']),
+        );
+      },
+    );
   }
+
+  void _searchPressed() {
+    setState(() {
+      if (this._searchIcon.icon == Icons.search) {
+        this._searchIcon = new Icon(Icons.close);
+        this._appBarTitle = new TextField(
+          controller: _filter,
+          decoration: new InputDecoration(
+            prefixIcon: new Icon(Icons.search),
+            hintText: 'Search...'
+          ),
+        );
+      } else {
+        this._searchIcon = new Icon(Icons.search);
+        this._appBarTitle = new Text( 'Search Example' );
+        filteredNames = names;
+        _filter.clear();
+      }
+    });
+  }
+
+Future<List<ColleagueTemp>> fetchPhotos(http.Client client) async {
+  String response = await loadColleaguesList();
+
+   // Use the compute function to run parsePhotos in a separate isolate
+  return compute(parseColleagues, response);
 }
 
+// A function that will convert a response body into a List<Photo>
+List<ColleagueTemp> parseColleagues(String responseBody) {
+  final parsed = json.decode(responseBody).cast<Map<String, dynamic>>();
+
+  return parsed.map<ColleagueTemp>((json) => ColleagueTemp.fromJson(json)).toList();
+}
+
+Future<String> loadColleaguesList() async {
+  return await rootBundle.loadString('assets/data.json');
+
+
+  // void _getNames() async {
+  //   final response = await dio.get('https://swapi.co/api/people');
+  //   List tempList = new List();
+  //   for (int i = 0; i < response.data['results'].length; i++) {
+  //     tempList.add(response.data['results'][i]);
+  //   }
+  //   setState(() {
+  //     names =ColleagueTemp;
+  //     names.shuffle();
+  //     filteredNames = names;
+  //   });
+  // }
+}
+}

@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:find_colleague/screens/Home.dart';
 import 'package:find_colleague/screens/Second.dart';
 import 'package:find_colleague/screens/Third.dart';
-import 'package:find_colleague/screens/Fourth.dart';
+import 'package:find_colleague/screens/FourthTen.dart';
+import 'package:find_colleague/screens/FourthEleven.dart';
 import 'package:find_colleague/screens/Fifth.dart';
 
 
@@ -23,7 +24,8 @@ class MyApp extends StatelessWidget {
         '/Home': (BuildContext context) => new Home(),
         '/Second': (BuildContext context) => new Second(),
         '/Third': (BuildContext context) => new Third(),
-        '/Fourth': (BuildContext context) => new Fourth(),
+        '/FourthTen': (BuildContext context) => new FourthTen(),
+        '/FourthEleven': (BuildContext context) => new FourthEleven(),
         '/Fifth': (BuildContext context) => new Fifth(),
       },
       home: new Home(),
