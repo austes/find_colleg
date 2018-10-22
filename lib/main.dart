@@ -5,7 +5,7 @@ import 'package:find_colleague/screens/Second.dart';
 import 'package:find_colleague/screens/Third.dart';
 import 'package:find_colleague/screens/FourthTen.dart';
 import 'package:find_colleague/screens/FourthEleven.dart';
-import 'package:find_colleague/screens/Fifth.dart';
+
 
 
 
@@ -26,7 +26,7 @@ class MyApp extends StatelessWidget {
         '/Third': (BuildContext context) => new Third(),
         '/FourthTen': (BuildContext context) => new FourthTen(),
         '/FourthEleven': (BuildContext context) => new FourthEleven(),
-        '/Fifth': (BuildContext context) => new Fifth(),
+        
       },
       home: new Home(),
     );

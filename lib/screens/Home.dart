@@ -5,9 +5,15 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text('Programėlė rasti kolegą'),
+        title: new Text('Programėlė darbuotojų vietai surasti'),
       ),
       body: new Container(
+        decoration: new BoxDecoration(
+          image: new DecorationImage(
+            image: new AssetImage("assets/bure.png"),
+            fit: BoxFit.cover,
+          ),
+        ),
         padding: new EdgeInsets.all(20.0),
         child: new Center(
           child: new Column(
@@ -15,10 +21,7 @@ class Home extends StatelessWidget {
             children: <Widget>[
               new Text('Sveiki atvykę!',
                   style: new TextStyle(
-                      fontSize: 35.0, fontWeight: FontWeight.bold)),
-              new Text('Programėlė darbuotojų vietai surasti',
-                  style: new TextStyle(
-                      fontSize: 20.0, fontWeight: FontWeight.bold)),
+                      fontSize: 50.0, fontWeight: FontWeight.bold, color: new Color(0xFFFFFFFF))),
               new RaisedButton(
                   onPressed: () {
                     Navigator.of(context).pushNamed('/Second');

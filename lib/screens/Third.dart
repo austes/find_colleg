@@ -15,6 +15,7 @@ class Third extends StatelessWidget {
             style: new TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
       ),
       body: new Container(
+       
         margin: new EdgeInsets.all(0.0),
         child: new Center(
           child: new Column(
@@ -47,20 +48,7 @@ class Third extends StatelessWidget {
                         Navigator.of(context).pushNamedAndRemoveUntil(
                             '/FourthEleven', (Route<dynamic> route) => false);
                       }),
-              new Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  new RaisedButton(
-                      textColor: Colors.white,
-                      color: Colors.blue,
-                      child: new Text('Sugrįžti'),
-                      onPressed: () {
-                        Navigator.of(context).pushNamedAndRemoveUntil(
-                            '/Home', (Route<dynamic> route) => false);
-                      }),
-                 
-                ],
-              ),
+            
             ],
           ),
         ),
