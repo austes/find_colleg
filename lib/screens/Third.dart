@@ -11,11 +11,12 @@ class Third extends StatelessWidget {
   Widget build(BuildContext context) {
     return new Scaffold(
       appBar: new AppBar(
-        title: new Text('Pasirinkite auksta',
+        title: new Text('Pasirinkite aukštą:',
             style: new TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
       ),
       body: new Container(
-        padding: new EdgeInsets.all(32.0),
+       
+        margin: new EdgeInsets.all(0.0),
         child: new Center(
           child: new Column(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -26,37 +27,28 @@ class Third extends StatelessWidget {
                 width: 450.0,
                 height: 150.0,
               ),
-              new Text('10',
-                  style: new TextStyle(
-                      fontSize: 20.0, fontWeight: FontWeight.bold)),
+               new RaisedButton(
+                      textColor: Colors.white,
+                      color: Colors.red,
+                      child: new Text('Dešimtas aukštas'),
+                      onPressed: () {
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                            '/FourthTen', (Route<dynamic> route) => false);
+                      }),
               new Image.asset(
                 'assets/eleven.png',
                 width: 450.0,
                 height: 150.0,
               ),
-              new Text('11',
-                  style: new TextStyle(
-                      fontSize: 20.0, fontWeight: FontWeight.bold)),
-              Center(
-                child: new RaisedButton(
-                    textColor: Colors.white,
-                    color: Colors.blue,
-                    child: new Text('Sugrizti'),
-                    onPressed: () {
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                          '/Home', (Route<dynamic> route) => false);
-                    }),
-              ),
-              Center(
-                child: new RaisedButton(
-                    textColor: Colors.white,
-                    color: Colors.red,
-                    child: new Text('Toliau'),
-                    onPressed: () {
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                          '/Fourth', (Route<dynamic> route) => false);
-                    }),
-              ),
+               new RaisedButton(
+                      textColor: Colors.white,
+                      color: Colors.red,
+                      child: new Text('Vienuoliktas aukštas'),
+                      onPressed: () {
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                            '/FourthEleven', (Route<dynamic> route) => false);
+                      }),
+            
             ],
           ),
         ),
