@@ -11,7 +11,7 @@ class Second extends StatelessWidget {
     return MaterialApp(
       title: 'Library',
       theme: ThemeData(
-        primarySwatch: Colors.deepOrange,
+        primarySwatch: Colors.blue,
       ),
       home: CatalogPage(),
     );
@@ -24,7 +24,7 @@ class CatalogPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Sarasas'),
+        title: Text('Darbuotojų sąrašas'),
       ),
       body: Center(
         child: CatalogList(),
@@ -113,7 +113,7 @@ class _CatalogListState extends State<CatalogList> {
                       overflow: TextOverflow.ellipsis,
                     ),
                     subtitle: Text(
-                        displayedBooks[index].name),
+                        displayedBooks[index].surname),
                     onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (BuildContext context) {
