@@ -1,92 +1,305 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
 import 'dart:convert';
-import 'package:flutter/services.dart';
-import 'dart:async' show Future;
-
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
-//TODO Reikia ideti SearchBar
-//TODO Reikia atvaizduoti laukus kortelemis (CardView)
-//TODO Reikia ideti filtra pagal komanda (on select dropdown update listview)
+void main() => runApp(Second());
 
-Future<List<ColleagueTemp>> fetchPhotos(http.Client client) async {
-  String response = await loadColleaguesList();
-
-  // Use the compute function to run parsePhotos in a separate isolate
-  return compute(parseColleagues, response);
+class Second extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Library',
+      theme: ThemeData(
+        primarySwatch: Colors.deepOrange,
+      ),
+      home: CatalogPage(),
+    );
+  }
 }
 
-// A function that will convert a response body into a List<Photo>
-List<ColleagueTemp> parseColleagues(String responseBody) {
-  final parsed = json.decode(responseBody).cast<Map<String, dynamic>>();
-
-  return parsed
-      .map<ColleagueTemp>((json) => ColleagueTemp.fromJson(json))
-      .toList();
+/// The screen which displays the full catalog of books in library.
+class CatalogPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Sarasas'),
+      ),
+      body: Center(
+        child: CatalogList(),
+      ),
+    );
+  }
 }
 
-Future<String> loadColleaguesList() async {
-  return await rootBundle.loadString('assets/data.json');
+/// The list of books and its search bar.
+class CatalogList extends StatefulWidget {
+  @override
+  _CatalogListState createState() => _CatalogListState();
 }
 
-class ColleagueTemp {
+class _CatalogListState extends State<CatalogList> {
+  /// All books in the catalog.
+  List<Book> books;
+
+  /// Books currently being displayed in the list.
+  List<Book> displayedBooks;
+
+  /// The controller to keep track of search field content and changes.
+  final TextEditingController searchController = TextEditingController();
+
+  /// Kicks off API fetch on creation.
+  _CatalogListState() {
+    _fetchBookList();
+    searchController.addListener(_search);
+  }
+
+  /// Fetches the list of books and updates state.
+  void _fetchBookList() async {
+    var uri = new Uri.http('find-colleague.000webhostapp.com', '/all'); 
+    //debugPrint('response: $response');
+    http.Response response = await http.get(uri);
+    List<Map<String, dynamic>> newBooksRaw =
+    json.decode(response.body).cast<Map<String, dynamic>>();
+    List<Book> newBooks =
+    newBooksRaw.map((bookData) => Book.fromJson(bookData)).toList();
+    setState(() {
+      books = newBooks;
+      displayedBooks = books;
+    });
+  }
+
+  /// Performs a case insensitive search.
+  void _search() {
+    if (searchController.text == '') {
+      setState(() {
+        displayedBooks = books;
+      });
+    } else {
+      List<Book> filteredBooks = books
+          .where((book) => book.name
+          .toLowerCase()
+          .contains(searchController.text.toLowerCase()))
+          .toList();
+      setState(() {
+        displayedBooks = filteredBooks;
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return displayedBooks != null
+        ? Column(
+      children: <Widget>[
+        new Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: TextField(
+            decoration: InputDecoration(hintText: 'Search for titles...'),
+            controller: searchController,
+          ),
+        ),
+        new Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: ListView.builder(
+              itemBuilder: (BuildContext context, int index) => Card(
+                elevation: 2.0,
+                child: ListTile(
+                    title: Text(
+                      displayedBooks[index].name,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    subtitle: Text(
+                        displayedBooks[index].name),
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (BuildContext context) {
+                            return DetailPage(displayedBooks[index].id);
+                          }));
+                    }),
+              ),
+              itemCount: displayedBooks.length,
+            ),
+          ),
+        ),
+      ],
+    )
+        : Center(child: CircularProgressIndicator());
+  }
+}
+
+class Book {
+  final String id;
   final String name;
   final String surname;
   final String team;
   final String respons;
 
-  ColleagueTemp({this.name, this.surname, this.team, this.respons});
+  /// Creates a Book instance out of JSON received from the API.
+  Book.fromJson(Map<String, dynamic> json)
+      : id = json['id'],
+        name = json['name'],
+        surname = json['surname'],
+        team = json['team'],
+        respons = json['respons'];
+}
 
-  factory ColleagueTemp.fromJson(Map<String, dynamic> parsedJson) {
-    return ColleagueTemp(
-      name: parsedJson['name'] as String,
-      surname: parsedJson['surname'] as String,
-      team: parsedJson['team'] as String,
-      respons: parsedJson['respons'] as String,
+/// The screen which displays the full details of a given book.
+class DetailPage extends StatefulWidget {
+  final String bookId;
+
+  DetailPage(this.bookId);
+
+  @override
+  _DetailPageState createState() => _DetailPageState();
+}
+
+class _DetailPageState extends State<DetailPage> {
+  /// The full book data.
+  Book book;
+
+  /// Flag indicating whether the name field is nonempty.
+  bool fieldHasContent = false;
+
+  /// The controller to keep track of name field content and changes.
+  final TextEditingController nameController = TextEditingController();
+
+  /// Kicks off API fetch on creation.
+  _DetailPageState() {
+    _fetchBookDetails();
+    nameController.addListener(_handleTextChange);
+  }
+
+  /// Fetches the books details and updates state.
+  void _fetchBookDetails() async {
+    ////api.jsonbin.io/b/5bce457aadf9f5652a6342d6
+    //TODO Problemine vieta. Dart Error: Unhandled exception:
+    //    type 'List<dynamic>' is not a subtype of type 'Map<String, dynamic>'
+    http.Response response =
+    await http.get('http://find-colleague.000webhostapp.com/find?id=${widget.bookId}'); 
+    debugPrint('response: $response');
+    Map<String,dynamic> newBookRaw = json.decode(response.body);
+
+    Book newBook = Book.fromJson(newBookRaw);
+    setState(() {
+      book = newBook;
+    });
+  }
+
+  /// Check out a book to the name entered.
+  void _checkOut() async {
+    http.Response response = await http.post(
+      'http://<API location>/checkOutBook',
+      body: {'id': book.id, 'name': nameController.text},
+    );
+    Map<String, dynamic> newBookRaw = json.decode(response.body);
+    Book newBook = Book.fromJson(newBookRaw);
+    setState(() {
+      book = newBook;
+    });
+  }
+
+  /// Remove a checked out entry for the name entered.
+  void _return() async {
+    http.Response response = await http.post(
+      'http://<API location>/returnBook',
+      body: {'id': book.id, 'name': nameController.text},
+    );
+    Map<String, dynamic> newBookRaw = json.decode(response.body);
+    Book newBook = Book.fromJson(newBookRaw);
+    setState(() {
+      book = newBook;
+    });
+  }
+
+  void _handleTextChange() {
+    setState(() {
+      fieldHasContent = nameController.text != '';
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(book?.name ?? ''),
+      ),
+      body: book != null
+          ? new Center(
+        child: new SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Card(
+              elevation: 5.0,
+              child: Center(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(24.0, 0.0, 24.0, 24.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        _BodySection('Pavarde', book.surname),
+                        _BodySection(
+                            'Team', book.team ?? 'N/A'),
+                        _BodySection('Kazkas dar', book.respons),
+                        Column(
+                          children: <Widget>[
+                            TextField(
+                              decoration:
+                              InputDecoration(hintText: 'Enter name'),
+                              controller: nameController,
+                            ),
+                            new Padding(
+                              padding: const EdgeInsets.only(top: 16.0),
+                              child: new Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment.spaceEvenly,
+                                children: <Widget>[
+                                  RaisedButton(
+                                    child: Text('kazka turintys daryti mygtukai!'), onPressed: () {},
+                                  ),
+                                  RaisedButton(
+                                    child: Text('Return'),
+                                    onPressed:
+                                    fieldHasContent ? _return : null,
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
+                        )
+                      ],
+                    ),
+                  )),
+            ),
+          ),
+        ),
+      )
+          : Center(child: CircularProgressIndicator()),
     );
   }
 }
 
-class Second extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return new Scaffold(
-      appBar: new AppBar(
-        title: new Text('Programėlė darbuotojams'),
-      ),
-      body: FutureBuilder<List<ColleagueTemp>>(
-        future: fetchPhotos(http.Client()),
-        builder: (context, snapshot) {
-          if (snapshot.hasError) print(snapshot.error);
+class _BodySection extends StatelessWidget {
+  final String title;
+  final String content;
 
-          return snapshot.hasData
-              ? ColleagueList(collegues: snapshot.data)
-              : Center(child: CircularProgressIndicator());
-        },
-      ),
-    );
-  }
-}
-
-class ColleagueList extends StatelessWidget {
-  final List<ColleagueTemp> collegues;
-
-  ColleagueList({Key key, this.collegues}) : super(key: key);
+  _BodySection(this.title, this.content);
 
   @override
   Widget build(BuildContext context) {
-    
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: collegues.length,
-      itemBuilder: (context, index) {
-        return new ListTile(
-          title: new Text(collegues[index].name),
-        );
-      },
+    return new Padding(
+      padding: const EdgeInsets.only(top: 24.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: <Widget>[
+          Text(title, style: Theme.of(context).textTheme.title),
+          Text(content, style: TextStyle(color: Colors.grey[700]))
+        ],
+      ),
     );
-    
   }
 }
