@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
-import 'package:flutter/foundation.dart';
+//import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
 void main() => runApp(Second());
@@ -18,13 +18,14 @@ class Second extends StatelessWidget {
   }
 }
 
-/// The screen which displays the full catalog of books in library.
+/// The screen which displays the full catalog of people
 class CatalogPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
+    return new Scaffold(
+      appBar: new AppBar(
         title: Text('Darbuotojų sąrašas'),
+        
       ),
       body: Center(
         child: CatalogList(),
@@ -33,17 +34,17 @@ class CatalogPage extends StatelessWidget {
   }
 }
 
-/// The list of books and its search bar.
+/// The list of people and its search bar.
 class CatalogList extends StatefulWidget {
   @override
   _CatalogListState createState() => _CatalogListState();
 }
 
 class _CatalogListState extends State<CatalogList> {
-  /// All books in the catalog.
+  /// All people in the catalog.
   List<Book> books;
 
-  /// Books currently being displayed in the list.
+  /// People currently being displayed in the list.
   List<Book> displayedBooks;
 
   /// The controller to keep track of search field content and changes.
@@ -55,13 +56,13 @@ class _CatalogListState extends State<CatalogList> {
     searchController.addListener(_search);
   }
 
-  /// Fetches the list of books and updates state.
+  /// Fetches the list of people and updates state.
   void _fetchBookList() async {
     var uri = new Uri.http('find-colleague.000webhostapp.com', '/all'); 
-    //debugPrint('response: $response');
+   // debugPrint('response: $response');
     http.Response response = await http.get(uri);
     List<Map<String, dynamic>> newBooksRaw =
-    json.decode(response.body).cast<Map<String, dynamic>>();
+    json.decode(response.body).cast<Map<String, dynamic>>(); 
     List<Book> newBooks =
     newBooksRaw.map((bookData) => Book.fromJson(bookData)).toList();
     setState(() {
@@ -96,7 +97,7 @@ class _CatalogListState extends State<CatalogList> {
         new Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
           child: TextField(
-            decoration: InputDecoration(hintText: 'Search for titles...'),
+            decoration: InputDecoration(hintText: 'Įrašykite vardą...'),
             controller: searchController,
           ),
         ),
@@ -117,7 +118,7 @@ class _CatalogListState extends State<CatalogList> {
                     onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (BuildContext context) {
-                            return DetailPage(displayedBooks[index].id);
+                            return DetailPage("${displayedBooks[index].id}");
                           }));
                     }),
               ),
@@ -140,7 +141,7 @@ class Book {
 
   /// Creates a Book instance out of JSON received from the API.
   Book.fromJson(Map<String, dynamic> json)
-      : id = json['id'],
+      : id = "${json['id']}",
         name = json['name'],
         surname = json['surname'],
         team = json['team'],
@@ -154,7 +155,7 @@ class DetailPage extends StatefulWidget {
   DetailPage(this.bookId);
 
   @override
-  _DetailPageState createState() => _DetailPageState();
+  _DetailPageState createState() => _DetailPageState(this.bookId);
 }
 
 class _DetailPageState extends State<DetailPage> {
@@ -167,8 +168,10 @@ class _DetailPageState extends State<DetailPage> {
   /// The controller to keep track of name field content and changes.
   final TextEditingController nameController = TextEditingController();
 
+String bookID ;
   /// Kicks off API fetch on creation.
-  _DetailPageState() {
+  _DetailPageState(String bookId) {
+    this.bookID = bookId;
     _fetchBookDetails();
     nameController.addListener(_handleTextChange);
   }
@@ -178,12 +181,17 @@ class _DetailPageState extends State<DetailPage> {
     ////api.jsonbin.io/b/5bce457aadf9f5652a6342d6
     //TODO Problemine vieta. Dart Error: Unhandled exception:
     //    type 'List<dynamic>' is not a subtype of type 'Map<String, dynamic>'
-    http.Response response =
-    await http.get('http://find-colleague.000webhostapp.com/find?id=${widget.bookId}'); 
-    debugPrint('response: $response');
-    Map<String,dynamic> newBookRaw = json.decode(response.body);
 
-    Book newBook = Book.fromJson(newBookRaw);
+    var uri = new Uri.https('find-colleague.000webhostapp.com', '/find?id=$bookID');
+    var decoded = Uri.decodeFull(uri.toString());
+    debugPrint('movieTitle: $decoded');
+    http.Response response = await http.get(decoded);
+//    http.Response response =
+//    await http.get('http://backendauste.000webhostapp.com/find?id=${widget.bookId}');
+    debugPrint('response: $response');
+    List<dynamic> newBookRaw = json.decode(response.body);
+
+    Book newBook = Book.fromJson(newBookRaw[0]);
     setState(() {
       book = newBook;
     });
@@ -225,7 +233,7 @@ class _DetailPageState extends State<DetailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(book?.name ?? ''),
+        title: Text(book?.surname ?? ''),
       ),
       body: book != null
           ? new Center(
