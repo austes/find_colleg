@@ -25,7 +25,6 @@ class CatalogPage extends StatelessWidget {
     return new Scaffold(
       appBar: new AppBar(
         title: Text('Darbuotojų sąrašas'),
-        
       ),
       body: Center(
         child: CatalogList(),
@@ -58,13 +57,13 @@ class _CatalogListState extends State<CatalogList> {
 
   /// Fetches the list of people and updates state.
   void _fetchBookList() async {
-    var uri = new Uri.http('find-colleague.000webhostapp.com', '/all'); 
-   // debugPrint('response: $response');
+    var uri = new Uri.http('find-colleague.000webhostapp.com', '/all');
+    // debugPrint('response: $response');
     http.Response response = await http.get(uri);
     List<Map<String, dynamic>> newBooksRaw =
-    json.decode(response.body).cast<Map<String, dynamic>>(); 
+        json.decode(response.body).cast<Map<String, dynamic>>();
     List<Book> newBooks =
-    newBooksRaw.map((bookData) => Book.fromJson(bookData)).toList();
+        newBooksRaw.map((bookData) => Book.fromJson(bookData)).toList();
     setState(() {
       books = newBooks;
       displayedBooks = books;
@@ -80,8 +79,8 @@ class _CatalogListState extends State<CatalogList> {
     } else {
       List<Book> filteredBooks = books
           .where((book) => book.name
-          .toLowerCase()
-          .contains(searchController.text.toLowerCase()))
+              .toLowerCase()
+              .contains(searchController.text.toLowerCase()))
           .toList();
       setState(() {
         displayedBooks = filteredBooks;
@@ -93,41 +92,41 @@ class _CatalogListState extends State<CatalogList> {
   Widget build(BuildContext context) {
     return displayedBooks != null
         ? Column(
-      children: <Widget>[
-        new Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: TextField(
-            decoration: InputDecoration(hintText: 'Įrašykite vardą...'),
-            controller: searchController,
-          ),
-        ),
-        new Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ListView.builder(
-              itemBuilder: (BuildContext context, int index) => Card(
-                elevation: 2.0,
-                child: ListTile(
-                    title: Text(
-                      displayedBooks[index].name,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    subtitle: Text(
-                        displayedBooks[index].surname),
-                    onTap: () {
-                      Navigator.of(context).push(MaterialPageRoute(
-                          builder: (BuildContext context) {
-                            return DetailPage("${displayedBooks[index].id}");
-                          }));
-                    }),
+            children: <Widget>[
+              new Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                child: TextField(
+                  decoration: InputDecoration(hintText: 'Įrašykite vardą...'),
+                  controller: searchController,
+                ),
               ),
-              itemCount: displayedBooks.length,
-            ),
-          ),
-        ),
-      ],
-    )
+              new Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: ListView.builder(
+                    itemBuilder: (BuildContext context, int index) => Card(
+                          elevation: 2.0,
+                          child: ListTile(
+                              title: Text(
+                                displayedBooks[index].name,
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              subtitle: Text(displayedBooks[index].surname),
+                              onTap: () {
+                                Navigator.of(context).push(MaterialPageRoute(
+                                    builder: (BuildContext context) {
+                                  return DetailPage(
+                                      "${displayedBooks[index].id}");
+                                }));
+                              }),
+                        ),
+                    itemCount: displayedBooks.length,
+                  ),
+                ),
+              ),
+            ],
+          )
         : Center(child: CircularProgressIndicator());
   }
 }
@@ -139,7 +138,7 @@ class Book {
   final String team;
   final String respons;
 
-  /// Creates a Book instance out of JSON received from the API.
+  /// Creates a person instance out of JSON received from the API.
   Book.fromJson(Map<String, dynamic> json)
       : id = "${json['id']}",
         name = json['name'],
@@ -148,7 +147,7 @@ class Book {
         respons = json['respons'];
 }
 
-/// The screen which displays the full details of a given book.
+/// The screen which displays the full details of a given person.
 class DetailPage extends StatefulWidget {
   final String bookId;
 
@@ -159,7 +158,7 @@ class DetailPage extends StatefulWidget {
 }
 
 class _DetailPageState extends State<DetailPage> {
-  /// The full book data.
+  /// The full people data.
   Book book;
 
   /// Flag indicating whether the name field is nonempty.
@@ -168,7 +167,8 @@ class _DetailPageState extends State<DetailPage> {
   /// The controller to keep track of name field content and changes.
   final TextEditingController nameController = TextEditingController();
 
-String bookID ;
+  String bookID;
+
   /// Kicks off API fetch on creation.
   _DetailPageState(String bookId) {
     this.bookID = bookId;
@@ -176,18 +176,13 @@ String bookID ;
     nameController.addListener(_handleTextChange);
   }
 
-  /// Fetches the books details and updates state.
+  /// Fetches the person details and updates state.
   void _fetchBookDetails() async {
-    ////api.jsonbin.io/b/5bce457aadf9f5652a6342d6
-    //TODO Problemine vieta. Dart Error: Unhandled exception:
-    //    type 'List<dynamic>' is not a subtype of type 'Map<String, dynamic>'
-
-    var uri = new Uri.https('find-colleague.000webhostapp.com', '/find?id=$bookID');
+    var uri =
+        new Uri.https('find-colleague.000webhostapp.com', '/find?id=$bookID');
     var decoded = Uri.decodeFull(uri.toString());
     debugPrint('movieTitle: $decoded');
     http.Response response = await http.get(decoded);
-//    http.Response response =
-//    await http.get('http://backendauste.000webhostapp.com/find?id=${widget.bookId}');
     debugPrint('response: $response');
     List<dynamic> newBookRaw = json.decode(response.body);
 
@@ -197,7 +192,7 @@ String bookID ;
     });
   }
 
-  /// Check out a book to the name entered.
+  /// Check out a person to the name entered.
   void _checkOut() async {
     http.Response response = await http.post(
       'http://<API location>/checkOutBook',
@@ -233,59 +228,45 @@ String bookID ;
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(book?.surname ?? ''),
+        title: Text(book?.name ?? ''),
       ),
       body: book != null
           ? new Center(
-        child: new SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(20.0),
-            child: Card(
-              elevation: 5.0,
-              child: Center(
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(24.0, 0.0, 24.0, 24.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        _BodySection('Pavarde', book.surname),
-                        _BodySection(
-                            'Team', book.team ?? 'N/A'),
-                        _BodySection('Kazkas dar', book.respons),
-                        Column(
-                          children: <Widget>[
-                            TextField(
-                              decoration:
-                              InputDecoration(hintText: 'Enter name'),
-                              controller: nameController,
-                            ),
-                            new Padding(
-                              padding: const EdgeInsets.only(top: 16.0),
-                              child: new Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.spaceEvenly,
-                                children: <Widget>[
-                                  RaisedButton(
-                                    child: Text('kazka turintys daryti mygtukai!'), onPressed: () {},
-                                  ),
-                                  RaisedButton(
-                                    child: Text('Return'),
-                                    onPressed:
-                                    fieldHasContent ? _return : null,
-                                  ),
-                                ],
-                              ),
-                            )
-                          ],
-                        )
-                      ],
-                    ),
-                  )),
-            ),
-          ),
-        ),
-      )
+              child: new SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: Card(
+                    elevation: 5.0,
+                    child: Center(
+                        child: Padding(
+                      padding: const EdgeInsets.fromLTRB(24.0, 0.0, 24.0, 24.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          _BodySection('Vardas:', book.name),
+                          _BodySection('Pavardė:', book.surname),
+                          _BodySection('Komanda:', book.team ?? 'N/A'),
+                          //_BodySection('Kazkas dar', book.respons),
+                          Column(
+                            children: <Widget>[
+                              new Padding(
+                                padding: const EdgeInsets.only(top: 16.0),
+                                child: new Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: <Widget>[],
+                                ),
+                              )
+                            ],
+                          )
+                        ],
+                      ),
+                    )),
+                  ),
+                ),
+              ),
+            )
           : Center(child: CircularProgressIndicator()),
     );
   }
