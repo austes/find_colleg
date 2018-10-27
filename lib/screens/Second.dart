@@ -193,30 +193,30 @@ class _DetailPageState extends State<DetailPage> {
   }
 
   /// Check out a person to the name entered.
-  void _checkOut() async {
-    http.Response response = await http.post(
-      'http://<API location>/checkOutBook',
-      body: {'id': book.id, 'name': nameController.text},
-    );
-    Map<String, dynamic> newBookRaw = json.decode(response.body);
-    Book newBook = Book.fromJson(newBookRaw);
-    setState(() {
-      book = newBook;
-    });
-  }
+  // void _checkOut() async {
+  //   http.Response response = await http.post(
+  //     'http://<API location>/checkOutBook',
+  //     body: {'id': book.id, 'name': nameController.text},
+  //   );
+  //   Map<String, dynamic> newBookRaw = json.decode(response.body);
+  //   Book newBook = Book.fromJson(newBookRaw);
+  //   setState(() {
+  //     book = newBook;
+  //   });
+  // }
 
   /// Remove a checked out entry for the name entered.
-  void _return() async {
-    http.Response response = await http.post(
-      'http://<API location>/returnBook',
-      body: {'id': book.id, 'name': nameController.text},
-    );
-    Map<String, dynamic> newBookRaw = json.decode(response.body);
-    Book newBook = Book.fromJson(newBookRaw);
-    setState(() {
-      book = newBook;
-    });
-  }
+  // void _return() async {
+  //   http.Response response = await http.post(
+  //     'http://<API location>/returnBook',
+  //     body: {'id': book.id, 'name': nameController.text},
+  //   );
+  //   Map<String, dynamic> newBookRaw = json.decode(response.body);
+  //   Book newBook = Book.fromJson(newBookRaw);
+  //   setState(() {
+  //     book = newBook;
+  //   });
+  // }
 
   void _handleTextChange() {
     setState(() {
@@ -248,27 +248,30 @@ class _DetailPageState extends State<DetailPage> {
                           _BodySection('Pavardė:', book.surname),
                           _BodySection('Komanda:', book.team ?? 'N/A'),
                           //_BodySection('Kazkas dar', book.respons),
-                          Column(
-                            children: <Widget>[
-                              new Padding(
-                                padding: const EdgeInsets.only(top: 16.0),
-                                child: new Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceEvenly,
-                                  children: <Widget>[],
-                                ),
-                              )
-                            ],
-                          )
+                          // Column(
+                          //   children: <Widget>[
+                          //     new Padding(
+                          //       padding: const EdgeInsets.only(top: 16.0),
+                          //       child: new Row(
+                          //         mainAxisAlignment:
+                          //             MainAxisAlignment.spaceEvenly,
+                          //         children: <Widget>[
+                                    
+                          //         ],
+                          //       ),
+                          //     )
+                          //   ],
+                          // )
                         ],
                       ),
                     )),
                   ),
+                  
                 ),
               ),
             )
-          : Center(child: CircularProgressIndicator()),
-    );
+          : Center(child: CircularProgressIndicator()));
+        
   }
 }
 
@@ -287,6 +290,7 @@ class _BodySection extends StatelessWidget {
         children: <Widget>[
           Text(title, style: Theme.of(context).textTheme.title),
           Text(content, style: TextStyle(color: Colors.grey[700]))
+          
         ],
       ),
     );
