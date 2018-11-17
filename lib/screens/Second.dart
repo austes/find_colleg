@@ -247,7 +247,7 @@ class _DetailPageState extends State<DetailPage> {
                           _BodySection('Vardas:', book.name),
                           _BodySection('Pavardė:', book.surname),
                           _BodySection('Komanda:', book.team ?? 'N/A'),
-                          //_BodySection('Kazkas dar', book.respons),
+                          _BodySection('Atsakomybės: ', book.respons),
                           // Column(
                           //   children: <Widget>[
                           //     new Padding(

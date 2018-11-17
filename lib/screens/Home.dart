@@ -68,6 +68,23 @@ class Home extends StatelessWidget {
                           color: new Color(0xFFFFFFFF))
                     ],
                   )),
+                  new RaisedButton(
+                  onPressed: () {
+                    Navigator.of(context).pushNamed('/Team');
+                  },
+                  
+                  child: new Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      new Text(
+                        "Pamatyti komandų sąrašą  ",
+                        style: new TextStyle(
+                         
+                        ),
+                      ),
+                      
+                    ],
+                  )),
             ],
           ),
         ),
