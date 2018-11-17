@@ -15,7 +15,6 @@ class Third extends StatelessWidget {
             style: new TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
       ),
       body: new Container(
-       
         margin: new EdgeInsets.all(0.0),
         child: new Center(
           child: new Column(
@@ -27,28 +26,35 @@ class Third extends StatelessWidget {
                 width: 450.0,
                 height: 150.0,
               ),
-               new RaisedButton(
-                      textColor: Colors.white,
-                      color: Colors.red,
-                      child: new Text('Dešimtas aukštas'),
-                      onPressed: () {
-                        Navigator.of(context).pushNamedAndRemoveUntil(
-                            '/FourthTen', (Route<dynamic> route) => false);
-                      }),
+              new RaisedButton(
+                  color: Theme.of(context).accentColor,
+                  elevation: 20.0,
+                  padding: const EdgeInsets.all(10.0),
+                  splashColor: Theme.of(context).accentColor,
+                  shape: new RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.circular(45.0)),
+                  child: new Text('Dešimtas aukštas'),
+                  onPressed: () {
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                        '/FourthTen', (Route<dynamic> route) => false);
+                  }),
               new Image.asset(
                 'assets/eleven.png',
                 width: 450.0,
                 height: 150.0,
               ),
-               new RaisedButton(
-                      textColor: Colors.white,
-                      color: Colors.red,
-                      child: new Text('Vienuoliktas aukštas'),
-                      onPressed: () {
-                        Navigator.of(context).pushNamedAndRemoveUntil(
-                            '/FourthEleven', (Route<dynamic> route) => false);
-                      }),
-            
+              new RaisedButton(
+                  color: Theme.of(context).accentColor,
+                  elevation: 20.0,
+                  padding: const EdgeInsets.all(10.0),
+                  splashColor: Theme.of(context).accentColor,
+                  shape: new RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.circular(40.0)),
+                  child: new Text('Vienuoliktas aukštas'),
+                  onPressed: () {
+                    Navigator.of(context).pushNamedAndRemoveUntil(
+                        '/FourthEleven', (Route<dynamic> route) => false);
+                  }),
             ],
           ),
         ),
