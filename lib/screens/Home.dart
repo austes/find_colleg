@@ -21,7 +21,9 @@ class Home extends StatelessWidget {
             children: <Widget>[
               new Text('Sveiki atvykę!',
                   style: new TextStyle(
-                      fontSize: 50.0, fontWeight: FontWeight.bold, color: new Color(0xFFFFFFFF))),
+                      fontSize: 50.0,
+                      fontWeight: FontWeight.bold,
+                      color: new Color(0xFFFFFFFF))),
               new RaisedButton(
                   onPressed: () {
                     Navigator.of(context).pushNamed('/Second');
@@ -68,21 +70,19 @@ class Home extends StatelessWidget {
                           color: new Color(0xFFFFFFFF))
                     ],
                   )),
-                  new RaisedButton(
+              new RaisedButton(
                   onPressed: () {
                     Navigator.of(context).pushNamed('/Team');
                   },
-                  
+                  elevation: 50.0,
+                  padding: const EdgeInsets.all(13.0),
                   child: new Row(
                     mainAxisSize: MainAxisSize.min,
                     children: <Widget>[
                       new Text(
                         "Pamatyti komandų sąrašą  ",
-                        style: new TextStyle(
-                         
-                        ),
+                        style: new TextStyle(),
                       ),
-                      
                     ],
                   )),
             ],

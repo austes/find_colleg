@@ -137,6 +137,9 @@ class Book {
   final String surname;
   final String team;
   final String respons;
+  final String image;
+  final String sektorius;
+  final String vieta;
 
   /// Creates a person instance out of JSON received from the API.
   Book.fromJson(Map<String, dynamic> json)
@@ -144,7 +147,10 @@ class Book {
         name = json['name'],
         surname = json['surname'],
         team = json['team'],
-        respons = json['respons'];
+        respons = json['respons'],
+         image = json['image'],
+          sektorius = json['sektorius'],
+           vieta = "${json['vieta']}";
 }
 
 /// The screen which displays the full details of a given person.
@@ -246,8 +252,19 @@ class _DetailPageState extends State<DetailPage> {
                         children: <Widget>[
                           _BodySection('Vardas:', book.name),
                           _BodySection('Pavardė:', book.surname),
-                          _BodySection('Komanda:', book.team ?? 'N/A'),
-                          _BodySection('Atsakomybės: ', book.respons),
+                          _BodySection('Komanda:', book.team ),
+                          _BodySection('Pareigybės: ', book.respons),
+                         
+                          _BodySection('Dabartinė vieta: ', book.sektorius + book.vieta ),
+                         // _BodySection('Darbo vieta: ', book.vieta),
+                          // _BodySection('Buvimo vieta: ', book.image),
+                        
+                           new Image.network(
+                book.image,
+                width: 500.0,
+                height: 180.0,
+              
+        ),
                           // Column(
                           //   children: <Widget>[
                           //     new Padding(
